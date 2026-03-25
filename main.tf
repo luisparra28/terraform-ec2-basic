@@ -10,6 +10,15 @@ resource "aws_instance" "demo" {
 
   associate_public_ip_address = var.public_ip
 
+  root_block_device {
+    encrypted = false
+  }
+
+  #ebs_block_device {
+  #  device_name = "test_volume"
+  #  encrypted = false
+  #}
+
   tags = {
     Name        = var.name
     Environment = var.environment
@@ -28,4 +37,11 @@ resource "aws_s3_bucket" "demo" {
 #  block_public_policy     = true
 #  ignore_public_acls      = true
 #  restrict_public_buckets = true
+#}
+
+#resource "aws_db_instance" "demo" {
+#  instance_class     = "db.t3.small"
+#  storage_encrypted  = false
+#  allocated_storage  = 50
+#  multi_az           = false
 #}
