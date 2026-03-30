@@ -12,7 +12,11 @@ resource "aws_instance" "demo" {
 
   root_block_device {
     encrypted = false
+    volume_type           = "gp2"
+    volume_size           = 20
+    delete_on_termination = true
   }
+  
 
   #ebs_block_device {
   #  device_name = "test_volume"
