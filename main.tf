@@ -49,3 +49,41 @@ resource "aws_s3_bucket" "demo" {
 #  allocated_storage  = 50
 #  multi_az           = false
 #}
+
+# IAM role for Lambda execution
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "example" {
+  name               = "lambda_execution_role"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
+
+resource "aws_lambda_function" "demo" {
+  function_name = "demo_function"
+  role = aws_iam_role.example.arn
+  handler                = "index.lambda_handler"
+  runtime                = "python3.12"
+
+  s3_bucket = aws_s3_bucket.demo.id
+  s3_key = "/"
+
+  memory_size = 2048
+  timeout     = 120
+
+  architectures = ["x86_64"] #arm64
+
+  ephemeral_storage {
+    size = 1024
+  }
+}
